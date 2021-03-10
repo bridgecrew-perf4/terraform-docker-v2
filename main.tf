@@ -51,7 +51,7 @@ resource "google_compute_instance" "terraform-staging" {
     [staging]
     ${self.network_interface[0].access_config[0].nat_ip}
     EOF
-  filename = "/inventory/hosts"
+  destination = "/inventory/hosts"
   }
 }
 
@@ -92,7 +92,7 @@ resource "google_compute_instance" "terraform-production" {
     [production]
     ${self.network_interface[0].access_config[0].nat_ip}
     EOF
-  filename = "/inventory/hosts"
+  destination = "/inventory/hosts"
   }
 }
 
