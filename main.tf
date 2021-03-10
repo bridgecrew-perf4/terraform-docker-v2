@@ -45,15 +45,23 @@ resource "google_compute_instance" "terraform-staging" {
     ssh-keys = "root:${file("/root/.ssh/id_rsa.pub")}" // Point to ssh public key for user root
   }
 
-  provisioner "file" {
-  content = <<-EOF
-    # Ansible inventory populated from Terraform.
-    [staging]
-    ${self.network_interface[0].access_config[0].nat_ip}
-    EOF
-  destination = "/inventory/hosts"
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt update",
+    ]
+    connection {
+      type     = "ssh"
+      user     = "root"
+      private_key = file("/root/.ssh/id_rsa")
+      host        = self.network_interface[0].access_config[0].nat_ip
+    }
   }
 }
+
+output "staging_public_ip" {
+    value = "${google_compute_instance.terraform-staging.network_interface.0.access_config.0.nat_ip}"
+}
+
 
 resource "google_compute_instance" "terraform-production" {
   name          = "terraform-production"
@@ -86,17 +94,35 @@ resource "google_compute_instance" "terraform-production" {
     ssh-keys = "root:${file("/root/.ssh/id_rsa.pub")}" // Point to ssh public key for user root
   }
 
-  provisioner "file" {
-  content = <<-EOF
-    # Ansible inventory populated from Terraform.
-    [production]
-    ${self.network_interface[0].access_config[0].nat_ip}
-    EOF
-  destination = "/inventory/hosts"
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt update",
+    ]
+    connection {
+      type     = "ssh"
+      user     = "root"
+      private_key = file("/root/.ssh/id_rsa")
+      host        = self.network_interface[0].access_config[0].nat_ip
+    }
   }
 }
 
+output "production_public_ip" {
+    value = "${google_compute_instance.terraform-production.network_interface.0.access_config.0.nat_ip}"
+}
 
+resource "null_resource" "ansible_provisioner" {
+  provisioner "file" {
+    content = <<-EOF
+    # Ansible inventory populated from Terraform.
+    [staging]
+    ${staging_public_ip}
+    [production]
+    ${production_public_ip}
+    EOF
+    destination = "/inventory/hosts"
+  }
+}
 
 resource "null_resource" "ansible_provisioner" {
   provisioner "local-exec" {
