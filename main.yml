@@ -1,0 +1,18 @@
+---
+- name: Prepare STAGING environment
+  hosts: staging
+  become: yes
+
+  roles:
+    - docker_tools
+    - dockerhub_connect
+    - imagebuilder_boxfuse
+
+- name: Prepare PRODUCTION environment
+  hosts: production
+  become: yes
+
+  roles:
+    - docker_tools
+    - dockerhub_connect
+    - containerserver_boxfuse

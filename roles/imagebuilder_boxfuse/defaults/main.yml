@@ -1,0 +1,6 @@
+---
+# defaults file for imagebuilder_boxfuse
+#Path to Dockerfile used to build image on Staging Environment
+dest_dockerfile_path: /home/pkhramchenkov/ansible-docker-dz9
+#Docker Image Name for Production Environment with boxfuse webapp
+boxfuse_docker_image: mas0lik/boxfuse-webapp:latest

@@ -1,0 +1,6 @@
+---
+# defaults file for containerserver_boxfuse
+#Docker Container Name on Host
+boxfuse_docker_container: boxfuse-webapp
+#Docker Image Name used to run container
+boxfuse_docker_image: mas0lik/boxfuse-webapp:latest
