@@ -111,7 +111,7 @@ output "production_public_ip" {
     value = "${google_compute_instance.terraform-production.network_interface.0.access_config.0.nat_ip}"
 }
 
-resource "null_resource" "ansible_provisioner" {
+resource "null_resource" "ansible_hosts_provisioner" {
   provisioner "file" {
     content = <<-EOF
     # Ansible inventory populated from Terraform.
@@ -124,7 +124,7 @@ resource "null_resource" "ansible_provisioner" {
   }
 }
 
-resource "null_resource" "ansible_provisioner" {
+resource "null_resource" "ansible_playbook_provisioner" {
   provisioner "local-exec" {
     command = "ANSIBLE_HOST_KEY_CHECKING=\"False\" ansible-playbook -u root --private-key=\"/root/.ssh/id_rsa\" -i inventory/hosts main.yml"
   }
