@@ -45,7 +45,7 @@ resource "google_compute_instance" "terraform-staging" {
     ssh-keys = "root:${file("/root/.ssh/id_rsa.pub")}" // Point to ssh public key for user root
   }
 
-  provisioner "file" "ansible_inventory_staging" {
+  provisioner "file" {
   content = <<-EOF
     # Ansible inventory populated from Terraform.
     [staging]
@@ -86,7 +86,7 @@ resource "google_compute_instance" "terraform-production" {
     ssh-keys = "root:${file("/root/.ssh/id_rsa.pub")}" // Point to ssh public key for user root
   }
 
-  provisioner "file" "ansible_inventory_production" {
+  provisioner "file" {
   content = <<-EOF
     # Ansible inventory populated from Terraform.
     [production]
