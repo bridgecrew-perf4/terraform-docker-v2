@@ -128,11 +128,11 @@ resource "null_resource" "ansible_hosts_provisioner" {
   depends_on = [time_sleep.wait_30_seconds]
   provisioner "local-exec" {
     interpreter = ["/bin/bash" ,"-c"]
-    command = <<-EOT
+    command = <<EOT
       export terraform_staging_public_ip=$(terraform output staging_public_ip);
       export terraform_production_public_ip=$(terraform output production_public_ip);
-      sed -e "s/staging_instance_ip/$terraform_staging_public_ip/g" inventory/hosts;
-      sed -e "s/production_instance_ip/$terraform_production_public_ip/g" inventory/hosts;
+      sed -e 's/staging_instance_ip/$terraform_staging_public_ip/g' inventory/hosts;
+      sed -e 's/production_instance_ip/$terraform_production_public_ip/g' inventory/hosts;
     EOT
   }
 }
