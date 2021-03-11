@@ -133,8 +133,8 @@ resource "null_resource" "ansible_hosts_provisioner" {
       echo $terraform_staging_public_ip;
       export terraform_production_public_ip=$(terraform output production_public_ip);
       echo $terraform_production_public_ip;
-      sed -i -e "s/staging_instance_ip/$terraform_staging_public_ip/g" ./inventory/hosts;
-      sed -i -e "s/production_instance_ip/$terraform_production_public_ip/g" ./inventory/hosts;
+      sed -i -e 's/staging_instance_ip/$terraform_staging_public_ip/g' ./inventory/hosts;
+      sed -i -e 's/production_instance_ip/$terraform_production_public_ip/g' ./inventory/hosts;
       sed -i -e 's/"//g' ./inventory/hosts;
       export ANSIBLE_HOST_KEY_CHECKING=False
     EOT
