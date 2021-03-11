@@ -45,17 +45,17 @@ resource "google_compute_instance" "terraform-staging" {
     ssh-keys = "root:${file("/root/.ssh/id_rsa.pub")}" // Point to ssh public key for user root
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt update",
-    ]
-    connection {
-      type     = "ssh"
-      user     = "root"
-      private_key = file("/root/.ssh/id_rsa")
-      host        = self.network_interface[0].access_config[0].nat_ip
-    }
-  }
+#  provisioner "remote-exec" {
+#    inline = [
+#      "sudo apt update",
+#    ]
+#    connection {
+#      type     = "ssh"
+#      user     = "root"
+#      private_key = file("/root/.ssh/id_rsa")
+#      host        = self.network_interface[0].access_config[0].nat_ip
+#    }
+#  }
 }
 
 output "staging_public_ip" {
@@ -93,17 +93,17 @@ resource "google_compute_instance" "terraform-production" {
     ssh-keys = "root:${file("/root/.ssh/id_rsa.pub")}" // Point to ssh public key for user root
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt update",
-    ]
-    connection {
-      type     = "ssh"
-      user     = "root"
-      private_key = file("/root/.ssh/id_rsa")
-      host        = self.network_interface[0].access_config[0].nat_ip
-    }
-  }
+#  provisioner "remote-exec" {
+#    inline = [
+#      "sudo apt update",
+#    ]
+#    connection {
+#      type     = "ssh"
+#      user     = "root"
+#      private_key = file("/root/.ssh/id_rsa")
+#      host        = self.network_interface[0].access_config[0].nat_ip
+#    }
+#  }
 }
 
 output "production_public_ip" {
@@ -121,11 +121,12 @@ output "production_public_ip" {
 resource "time_sleep" "wait_90_seconds" {
   depends_on = [google_compute_instance.terraform-production]
 
-  create_duration = "90s"
+  create_duration = "60s" // Change to 90s
 }
 
 resource "null_resource" "ansible_hosts_provisioner" {
   depends_on = [time_sleep.wait_90_seconds]
+  create_duration = "10s"
   provisioner "local-exec" {
     interpreter = ["/bin/bash" ,"-c"]
     command = <<-EOT
@@ -133,13 +134,13 @@ resource "null_resource" "ansible_hosts_provisioner" {
       export terraform_production_public_ip=$(terraform output production_public_ip);
       sed -e "s/staging_instance_ip/$terraform_staging_public_ip/g" ./inventory/hosts;
       sed -e "s/production_instance_ip/$terraform_production_public_ip/g" ./inventory/hosts;
-      ANSIBLE_HOST_KEY_CHECKING=\"False\" ansible-playbook -u root --private-key=\"/root/.ssh/id_rsa\" -i inventory/hosts main.yml
     EOT
   }
 }
 
-#resource "null_resource" "ansible_playbook_provisioner" {
-#  provisioner "local-exec" {
-#    command = "ANSIBLE_HOST_KEY_CHECKING=\"False\" ansible-playbook -u root --private-key=\"/root/.ssh/id_rsa\" -i inventory/hosts main.yml"
-#  }
-#}
+resource "null_resource" "ansible_playbook_provisioner" {
+  depends_on = [null_resource.ansible_hosts_provisioner]
+  provisioner "local-exec" {
+    command = "ANSIBLE_HOST_KEY_CHECKING=\"False\" ansible-playbook -u root --private-key=\"/root/.ssh/id_rsa\" -i inventory/hosts main.yml"
+  }
+}
