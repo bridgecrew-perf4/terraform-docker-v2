@@ -117,7 +117,7 @@ resource "local_file" "staging_public_ip" {
     [staging]
     google_compute_instance.terraform-staging.network_interface[0].access_config[0].nat_ip
     EOF
-  filename = "/inventory/hosts"
+  filename = "./inventory/hosts"
 }
 
 resource "local_file" "production_public_ip" {
@@ -125,7 +125,7 @@ resource "local_file" "production_public_ip" {
     [production]
     google_compute_instance.terraform-production.network_interface[0].access_config[0].nat_ip
     EOF
-  filename = "/inventory/hosts"
+  filename = "./inventory/hosts"
 }
 
 resource "null_resource" "ansible_playbook_provisioner" {
