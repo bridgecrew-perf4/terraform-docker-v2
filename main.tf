@@ -59,7 +59,7 @@ resource "google_compute_instance" "terraform-staging" {
 }
 
 output "staging_public_ip" {
-    value = "${google_compute_instance.terraform-staging.network_interface.0.access_config.0.nat_ip}"
+    value = google_compute_instance.terraform-staging.network_interface[0].access_config[0].nat_ip
 }
 
 
@@ -108,20 +108,24 @@ resource "google_compute_instance" "terraform-production" {
 }
 
 output "production_public_ip" {
-    value = "${google_compute_instance.terraform-production.network_interface.0.access_config.0.nat_ip}"
+    value = google_compute_instance.terraform-production.network_interface[0].access_config[0].nat_ip
 }
 
-resource "null_resource" "ansible_hosts_provisioner" {
-  provisioner "file" {
-    content = <<-EOF
+resource "local_file" "staging_public_ip" {
+  content = <<-EOF
     # Ansible inventory populated from Terraform.
     [staging]
-    ${staging_public_ip}
-    [production]
-    ${production_public_ip}
+    google_compute_instance.terraform-staging.network_interface[0].access_config[0].nat_ip
     EOF
-    destination = "/inventory/hosts"
-  }
+  filename = "/inventory/hosts"
+}
+
+resource "local_file" "production_public_ip" {
+  content = <<-EOF
+    [production]
+    google_compute_instance.terraform-production.network_interface[0].access_config[0].nat_ip
+    EOF
+  filename = "/inventory/hosts"
 }
 
 resource "null_resource" "ansible_playbook_provisioner" {
