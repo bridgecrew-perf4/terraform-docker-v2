@@ -130,6 +130,6 @@ resource "local_file" "production_public_ip" {
 
 resource "null_resource" "ansible_playbook_provisioner" {
   provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=\"False\" ansible-playbook -u root --private-key=\"/root/.ssh/id_rsa\" -i inventory/hosts main.yml"
+    command = "ANSIBLE_HOST_KEY_CHECKING=\"False\" ansible-playbook -u root --private-key=\"/root/.ssh/id_rsa\" -i ./inventory/hosts main.yml"
   }
 }
