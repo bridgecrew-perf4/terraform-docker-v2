@@ -62,15 +62,6 @@ output "staging_public_ip" {
     value = google_compute_instance.terraform-staging.network_interface[0].access_config[0].nat_ip
 }
 
-resource "local_file" "staging_public_ip" {
-  content = <<-EOF
-    # Ansible inventory populated from Terraform.
-    [staging]
-    google_compute_instance.terraform-staging.network_interface[0].access_config[0].nat_ip
-    EOF
-  filename = "./inventory/hosts"
-}
-
 resource "google_compute_instance" "terraform-production" {
   name          = "terraform-production"
   #machine_type = "e2-small" // 2vCPU, 2GB RAM
@@ -119,12 +110,23 @@ output "production_public_ip" {
     value = google_compute_instance.terraform-production.network_interface[0].access_config[0].nat_ip
 }
 
-resource "local_file" "production_public_ip" {
-  content = <<-EOF
-    [production]
-    google_compute_instance.terraform-production.network_interface[0].access_config[0].nat_ip
-    EOF
-  filename = "./inventory/hosts"
+#resource "local_file" "production_public_ip" {
+#  content = <<-EOF
+#    [production]
+#    google_compute_instance.terraform-production.network_interface[0].access_config[0].nat_ip
+#    EOF
+#  filename = "./inventory/hosts"
+#}
+
+resource "null_resource" "ansible_hosts_provisioner" {
+  provisioner "local-exec" {
+    command = <<EOT
+      export terraform_staging_public_ip=$(terraform output staging_public_ip);
+      export terraform_production_public_ip=$(terraform output production_public_ip);
+      sed -e "s/staging_instance_ip/$terraform_staging_public_ip/g" ./inventory/hosts;
+      sed -e "s/production_instance_ip/$terraform_production_public_ip/g" ./inventory/hosts
+    EOT
+  }
 }
 
 resource "null_resource" "ansible_playbook_provisioner" {
