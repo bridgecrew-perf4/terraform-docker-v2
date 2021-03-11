@@ -7,9 +7,9 @@
     update_cache: yes
   with_items:
     - docker.io
-    - python-pip
+    - python3-pip
 
 - name: Ensure DOCKER-PY python SDK for DOCKER is present
   pip:
-    name: docker-py
+    name: docker-py3
     state: present
