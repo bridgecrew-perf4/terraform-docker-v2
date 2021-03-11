@@ -62,6 +62,14 @@ output "staging_public_ip" {
     value = google_compute_instance.terraform-staging.network_interface[0].access_config[0].nat_ip
 }
 
+resource "local_file" "staging_public_ip" {
+  content = <<-EOF
+    # Ansible inventory populated from Terraform.
+    [staging]
+    google_compute_instance.terraform-staging.network_interface[0].access_config[0].nat_ip
+    EOF
+  filename = "./inventory/hosts"
+}
 
 resource "google_compute_instance" "terraform-production" {
   name          = "terraform-production"
@@ -111,15 +119,6 @@ output "production_public_ip" {
     value = google_compute_instance.terraform-production.network_interface[0].access_config[0].nat_ip
 }
 
-resource "local_file" "staging_public_ip" {
-  content = <<-EOF
-    # Ansible inventory populated from Terraform.
-    [staging]
-    google_compute_instance.terraform-staging.network_interface[0].access_config[0].nat_ip
-    EOF
-  filename = "./inventory/hosts"
-}
-
 resource "local_file" "production_public_ip" {
   content = <<-EOF
     [production]
@@ -130,6 +129,6 @@ resource "local_file" "production_public_ip" {
 
 resource "null_resource" "ansible_playbook_provisioner" {
   provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=\"False\" ansible-playbook -u root --private-key=\"/root/.ssh/id_rsa\" -i ./inventory/hosts main.yml"
+    command = "ANSIBLE_HOST_KEY_CHECKING=\"False\" ansible-playbook -u root --private-key=\"/root/.ssh/id_rsa\" -i inventory/hosts main.yml"
   }
 }
