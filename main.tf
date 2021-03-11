@@ -118,15 +118,14 @@ output "production_public_ip" {
 #  filename = "./inventory/hosts"
 #}
 
-resource "time_sleep" "wait_90_seconds" {
+resource "time_sleep" "wait_60_seconds" {
   depends_on = [google_compute_instance.terraform-production]
 
   create_duration = "60s" // Change to 90s
 }
 
 resource "null_resource" "ansible_hosts_provisioner" {
-  depends_on = [time_sleep.wait_90_seconds]
-  create_duration = "10s"
+  depends_on = [time_sleep.wait_60_seconds]
   provisioner "local-exec" {
     interpreter = ["/bin/bash" ,"-c"]
     command = <<-EOT
@@ -138,8 +137,14 @@ resource "null_resource" "ansible_hosts_provisioner" {
   }
 }
 
-resource "null_resource" "ansible_playbook_provisioner" {
+resource "time_sleep" "wait_10_seconds" {
   depends_on = [null_resource.ansible_hosts_provisioner]
+
+  create_duration = "10s" // Change to 90s
+}
+
+resource "null_resource" "ansible_playbook_provisioner" {
+  depends_on = [time_sleep.wait_10_seconds]
   provisioner "local-exec" {
     command = "ANSIBLE_HOST_KEY_CHECKING=\"False\" ansible-playbook -u root --private-key=\"/root/.ssh/id_rsa\" -i inventory/hosts main.yml"
   }
