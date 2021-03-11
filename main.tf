@@ -149,6 +149,6 @@ resource "time_sleep" "wait_5_seconds" {
 resource "null_resource" "ansible_playbook_provisioner" {
   depends_on = [time_sleep.wait_5_seconds]
   provisioner "local-exec" {
-    command = 'ansible-playbook -u root --private-key "/root/.ssh/id_rsa" -i inventory/hosts main.yml'
+    command = "ansible-playbook -u root --private-key '/root/.ssh/id_rsa' -i inventory/hosts main.yml"
   }
 }
