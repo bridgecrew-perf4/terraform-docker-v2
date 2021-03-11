@@ -45,17 +45,17 @@ resource "google_compute_instance" "terraform-staging" {
     ssh-keys = "root:${file("/root/.ssh/id_rsa.pub")}" // Point to ssh public key for user root
   }
 
-#  provisioner "remote-exec" {
-#    inline = [
-#      "sudo apt update",
-#    ]
-#    connection {
-#      type     = "ssh"
-#      user     = "root"
-#      private_key = file("/root/.ssh/id_rsa")
-#      host        = self.network_interface[0].access_config[0].nat_ip
-#    }
-#  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt update",
+    ]
+    connection {
+      type     = "ssh"
+      user     = "root"
+      private_key = file("/root/.ssh/id_rsa")
+      host        = self.network_interface[0].access_config[0].nat_ip
+    }
+  }
 }
 
 output "staging_public_ip" {
@@ -93,30 +93,22 @@ resource "google_compute_instance" "terraform-production" {
     ssh-keys = "root:${file("/root/.ssh/id_rsa.pub")}" // Point to ssh public key for user root
   }
 
-#  provisioner "remote-exec" {
-#    inline = [
-#      "sudo apt update",
-#    ]
-#    connection {
-#      type     = "ssh"
-#      user     = "root"
-#      private_key = file("/root/.ssh/id_rsa")
-#      host        = self.network_interface[0].access_config[0].nat_ip
-#    }
-#  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt update",
+    ]
+    connection {
+      type     = "ssh"
+      user     = "root"
+      private_key = file("/root/.ssh/id_rsa")
+      host        = self.network_interface[0].access_config[0].nat_ip
+    }
+  }
 }
 
 output "production_public_ip" {
     value = google_compute_instance.terraform-production.network_interface[0].access_config[0].nat_ip
 }
-
-#resource "local_file" "production_public_ip" {
-#  content = <<-EOF
-#    [production]
-#    google_compute_instance.terraform-production.network_interface[0].access_config[0].nat_ip
-#    EOF
-#  filename = "./inventory/hosts"
-#}
 
 resource "time_sleep" "wait_30_seconds" {
   depends_on = [google_compute_instance.terraform-production]
@@ -144,7 +136,7 @@ resource "null_resource" "ansible_hosts_provisioner" {
 resource "time_sleep" "wait_5_seconds" {
   depends_on = [null_resource.ansible_hosts_provisioner]
 
-  create_duration = "5s" // Change to 10s
+  create_duration = "5s"
 }
 
 resource "null_resource" "ansible_playbook_provisioner" {
