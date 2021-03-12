@@ -1,3 +1,9 @@
+#GCP Authentication
+#Step 1: Get you GCP authentication json in Console https://console.cloud.google.com/apis/credentials/serviceaccountkey
+#Step 2: Place json in /home/pkhramchenkov/ for example
+#Step 3: Execute export GOOGLE_APPLICATION_CREDENTIALS=/home/pkhramchenkov/DevOps-gcp.json
+#Step 4: Add "export GOOGLE_APPLICATION_CREDENTIALS=/home/pkhramchenkov/DevOps-gcp.json" to /root/.bashrc
+
 terraform {
   required_providers {
     google = {
