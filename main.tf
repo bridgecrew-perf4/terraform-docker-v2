@@ -8,7 +8,8 @@
 #Step 4: Add "export GOOGLE_APPLICATION_CREDENTIALS=/home/pkhramchenkov/DevOps-gcp.json" to /root/.bashrc
 
 #Dockerhub Authentication
-#Step 1: encrypt yor dockerhub password using command ansible-vault encrypt_string
+#Step 1: encrypt yor dockerhub password using command ansible-vault encrypt_string with password secret.
+#In case you want to use another password, please update line command at line 160 with actual ansible-vault password
 #Step 2: supply ansible vault output as 'dockerhub_token' var in roles/dockerhub_connect/defaults/main.yml as well
 #other credentials
 
@@ -156,6 +157,6 @@ resource "time_sleep" "wait_5_seconds" {
 resource "null_resource" "ansible_playbook_provisioner" {
   depends_on = [time_sleep.wait_5_seconds]
   provisioner "local-exec" {
-    command = "ansible-playbook -u root --private-key '/root/.ssh/id_rsa' -i inventory/hosts main.yml"
+    command = "ansible-playbook -u root --vault-password-file 'vault_pass' --private-key '/root/.ssh/id_rsa' -i inventory/hosts main.yml"
   }
 }
