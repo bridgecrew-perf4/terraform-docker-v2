@@ -1,8 +1,16 @@
+#Requirements: on master host install Git, Ansible and Terraform
+#Clone repository to desired location with git clone https://github.com/mas0lik/terraform-docker.git
+
 #GCP Authentication
 #Step 1: Get you GCP authentication json in Console https://console.cloud.google.com/apis/credentials/serviceaccountkey
 #Step 2: Place json in /home/pkhramchenkov/ for example
 #Step 3: Execute export GOOGLE_APPLICATION_CREDENTIALS=/home/pkhramchenkov/DevOps-gcp.json
 #Step 4: Add "export GOOGLE_APPLICATION_CREDENTIALS=/home/pkhramchenkov/DevOps-gcp.json" to /root/.bashrc
+
+#Dockerhub Authentication
+#Step 1: encrypt yor dockerhub password using command ansible-vault encrypt_string
+#Step 2: supply ansible vault output as 'dockerhub_token' var in roles/dockerhub_connect/defaults/main.yml as well
+#other credentials
 
 terraform {
   required_providers {
