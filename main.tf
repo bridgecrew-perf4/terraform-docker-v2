@@ -8,9 +8,10 @@
 #Step 4: Add "export GOOGLE_APPLICATION_CREDENTIALS=/home/pkhramchenkov/DevOps-gcp.json" to /root/.bashrc
 
 #Dockerhub Authentication
-#Step 1: encrypt yor dockerhub password using command ansible-vault encrypt_string with password secret.
-#In case you want to use another password, please update line command at line 160 with actual ansible-vault password
-#Step 2: supply ansible vault output as 'dockerhub_token' var in roles/dockerhub_connect/defaults/main.yml as well
+#Step 1: Encrypt yor dockerhub password using command ansible-vault
+#Execute ansible-vault encrypt_string "your_dockerhub_password" --name "dockerhub_token" --vault-password-file vault_pass
+#Default vault password is stored in vault_pass. Change it!
+#Step 2: Supply ansible vault output as 'dockerhub_token' var in roles/dockerhub_connect/defaults/main.yml as well
 #other credentials
 
 terraform {
