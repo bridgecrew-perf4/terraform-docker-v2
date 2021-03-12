@@ -18,9 +18,9 @@ ENV CATALINA_HOME /usr/local/tomcat
 ENV PATH $CATALINA_HOME/bin:$PATH
 RUN mkdir -p "$CATALINA_HOME"
 WORKDIR $CATALINA_HOME
-RUN wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.43/bin/apache-tomcat-9.0.43.tar.gz -O /tmp/tomcat.tar.gz
+RUN wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.44/bin/apache-tomcat-9.0.44.tar.gz -O /tmp/tomcat.tar.gz
 RUN cd /tmp && tar xvfz tomcat.tar.gz
-RUN cp -Rv /tmp/apache-tomcat-9.0.43/* /usr/local/tomcat/
+RUN cp -Rv /tmp/apache-tomcat-9.0.44/* /usr/local/tomcat/
 EXPOSE 8080
 RUN cp /home/pkhramchenkov/boxfuse-sample-java-war-hello/target/hello-1.0.war /usr/local/tomcat/webapps/
 CMD ["catalina.sh", "run"]
