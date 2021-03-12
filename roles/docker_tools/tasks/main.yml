@@ -11,5 +11,6 @@
 
 - name: Ensure DOCKER-PY python SDK for DOCKER is present
   pip:
-    name: docker-py3
+    name: docker-py
     state: present
+    update_cache: yes
