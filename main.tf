@@ -25,6 +25,7 @@ terraform {
 
 provider "google" {
   # Configuration options
+  credentials = file("DevOps-gcp.json")
   project     = "tonal-bloom-302318"
   region      = "us-central1"
   zone        = "us-central1-a"
